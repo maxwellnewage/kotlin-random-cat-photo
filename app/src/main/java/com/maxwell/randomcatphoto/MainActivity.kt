@@ -39,23 +39,4 @@ class MainActivity : AppCompatActivity(), OnFragmentChange {
     override fun onChange(name: String) {
         loadFragment(name)
     }
-
-    fun getCat(){
-        val loader = Retrofit.Builder()
-            .baseUrl("https://aws.random.cat/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val service = loader.create(MeowAPI::class.java)
-
-        service.getCatPicture().enqueue(object : Callback<Cat> {
-            override fun onFailure(call: Call<Cat>, t: Throwable) {
-
-            }
-
-            override fun onResponse(call: Call<Cat>, response: Response<Cat>) {
-
-            }
-        })
-    }
 }

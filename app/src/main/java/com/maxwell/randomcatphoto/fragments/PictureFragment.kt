@@ -5,7 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.maxwell.randomcatphoto.R
+import com.maxwell.randomcatphoto.network.MeowAPI
+import com.maxwell.randomcatphoto.network.models.Cat
+import kotlinx.android.synthetic.main.fragment_picture.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class PictureFragment : Fragment() {
     override fun onCreateView(
@@ -14,5 +23,36 @@ class PictureFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_picture, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        getCat()
+
+        btCatOtherPicture.setOnClickListener {
+            getCat()
+        }
+    }
+
+    fun getCat(){
+        val loader = Retrofit.Builder()
+            .baseUrl("https://aws.random.cat/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val service = loader.create(MeowAPI::class.java)
+
+        service.getCatPicture().enqueue(object : Callback<Cat> {
+            override fun onFailure(call: Call<Cat>, t: Throwable) {
+                btCatOtherPicture.text = activity!!.resources.getText(R.string.button_title_cat_fail)
+            }
+
+            override fun onResponse(call: Call<Cat>, response: Response<Cat>) {
+                Glide.with(activity!!).load(response.body()?.file).into(ivCatPicture)
+
+                btCatOtherPicture.text = activity!!.resources.getText(R.string.button_title_cat_other)
+            }
+        })
     }
 }
