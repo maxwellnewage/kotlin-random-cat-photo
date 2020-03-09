@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         service.getCatPicture().enqueue(object : Callback<Cat> {
             override fun onFailure(call: Call<Cat>, t: Throwable) {
-                
+
             }
 
             override fun onResponse(call: Call<Cat>, response: Response<Cat>) {
