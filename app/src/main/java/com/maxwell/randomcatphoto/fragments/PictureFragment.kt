@@ -90,6 +90,7 @@ class PictureFragment : Fragment() {
                             return false
                         }
                     })
+                    .override(view!!.width)
                     .into(ivCatPicture)
             }
         })
