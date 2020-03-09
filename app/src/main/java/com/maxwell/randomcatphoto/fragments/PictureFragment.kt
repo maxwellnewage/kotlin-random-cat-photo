@@ -1,11 +1,16 @@
 package com.maxwell.randomcatphoto.fragments
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.maxwell.randomcatphoto.R
 import com.maxwell.randomcatphoto.network.MeowAPI
 import com.maxwell.randomcatphoto.network.models.Cat
@@ -35,6 +40,12 @@ class PictureFragment : Fragment() {
         }
     }
 
+    fun failPictureLoad(){
+        btCatOtherPicture.text = activity!!.resources.getText(R.string.button_title_cat_fail)
+
+        pbLoading.visibility = View.GONE
+    }
+
     fun getCat(){
         pbLoading.visibility = View.VISIBLE
 
@@ -47,17 +58,39 @@ class PictureFragment : Fragment() {
 
         service.getCatPicture().enqueue(object : Callback<Cat> {
             override fun onFailure(call: Call<Cat>, t: Throwable) {
-                btCatOtherPicture.text = activity!!.resources.getText(R.string.button_title_cat_fail)
-
-                pbLoading.visibility = View.GONE
+                failPictureLoad()
             }
 
             override fun onResponse(call: Call<Cat>, response: Response<Cat>) {
-                Glide.with(activity!!).load(response.body()?.file).into(ivCatPicture)
+                Glide.with(activity!!)
+                    .load(response.body()?.file)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            failPictureLoad()
 
-                btCatOtherPicture.text = activity!!.resources.getText(R.string.button_title_cat_other)
+                            return false
+                        }
 
-                pbLoading.visibility = View.GONE
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            btCatOtherPicture.text = activity!!.resources.getText(R.string.button_title_cat_other)
+
+                            pbLoading.visibility = View.GONE
+
+                            return false
+                        }
+                    })
+                    .into(ivCatPicture)
             }
         })
     }
