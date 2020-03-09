@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Random Cat Photo</string>
     <string name="button_title_cat">Give me a Cat</string>
+    <string name="button_title_cat_other">Give Me Other Cat</string>
 </resources>

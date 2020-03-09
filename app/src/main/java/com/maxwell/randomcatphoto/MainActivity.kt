@@ -2,6 +2,9 @@ package com.maxwell.randomcatphoto
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import com.maxwell.randomcatphoto.fragments.HomeFragment
+import com.maxwell.randomcatphoto.fragments.PictureFragment
 import com.maxwell.randomcatphoto.network.MeowAPI
 import com.maxwell.randomcatphoto.network.models.Cat
 import retrofit2.Call
@@ -16,7 +19,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        getCat()
+        loadFragment("home")
+    }
+
+    fun loadFragment(name:String){
+        val transaction = supportFragmentManager.beginTransaction()
+
+        val fragment = if(name == "home"){
+            HomeFragment()
+        } else {
+            PictureFragment()
+        }
+
+        transaction.replace(R.id.flContainer, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 
     fun getCat(){
