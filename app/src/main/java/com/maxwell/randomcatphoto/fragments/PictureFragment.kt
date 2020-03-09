@@ -36,6 +36,8 @@ class PictureFragment : Fragment() {
     }
 
     fun getCat(){
+        pbLoading.visibility = View.VISIBLE
+
         val loader = Retrofit.Builder()
             .baseUrl("https://aws.random.cat/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -46,12 +48,16 @@ class PictureFragment : Fragment() {
         service.getCatPicture().enqueue(object : Callback<Cat> {
             override fun onFailure(call: Call<Cat>, t: Throwable) {
                 btCatOtherPicture.text = activity!!.resources.getText(R.string.button_title_cat_fail)
+
+                pbLoading.visibility = View.GONE
             }
 
             override fun onResponse(call: Call<Cat>, response: Response<Cat>) {
                 Glide.with(activity!!).load(response.body()?.file).into(ivCatPicture)
 
                 btCatOtherPicture.text = activity!!.resources.getText(R.string.button_title_cat_other)
+
+                pbLoading.visibility = View.GONE
             }
         })
     }
